@@ -64,6 +64,7 @@ export default function YouTubePreview({
         <div className="mt-3 flex items-center gap-3">
           <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {channelAvatar ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img src={channelAvatar} className="w-full h-full rounded-full" alt="" />
             ) : (
               channelName[0]?.toUpperCase() || "C"

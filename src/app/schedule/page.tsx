@@ -14,6 +14,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { ScheduledPost } from "@/types";
 import AppLayout from "@/components/layout/AppLayout";
+import CalendarView from "@/components/CalendarView";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
@@ -23,9 +24,11 @@ import {
   HiOutlineCloudUpload,
   HiOutlineTrash,
   HiOutlineFilter,
+  HiOutlinePencil,
 } from "react-icons/hi";
 import { FaYoutube, FaInstagram, FaTiktok } from "react-icons/fa";
 import toast from "react-hot-toast";
+import EditPostModal from "@/components/EditPostModal";
 
 const platformIcons = {
   youtube: FaYoutube,
@@ -46,6 +49,7 @@ export default function SchedulePage() {
   const [posts, setPosts] = useState<ScheduledPost[]>([]);
   const [filter, setFilter] = useState<FilterStatus>("all");
   const [view, setView] = useState<"list" | "calendar">("list");
+  const [editingPost, setEditingPost] = useState<ScheduledPost | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -180,8 +184,13 @@ export default function SchedulePage() {
           )}
         </div>
 
-        {/* Posts */}
-        {filteredPosts.length === 0 ? (
+        {/* Calendar View */}
+        {view === "calendar" && (
+          <CalendarView posts={filteredPosts} />
+        )}
+
+        {/* List View */}
+        {view === "list" && (filteredPosts.length === 0 ? (
           <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-16 text-center">
             <HiOutlineCalendar className="w-16 h-16 text-gray-700 mx-auto" />
             <h3 className="mt-4 text-lg font-medium text-white">No posts found</h3>
@@ -211,6 +220,7 @@ export default function SchedulePage() {
                       <div className="flex items-start gap-4">
                         <div className="w-24 h-16 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0">
                           {post.thumbnailUrl ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
                             <img
                               src={post.thumbnailUrl}
                               alt=""
@@ -250,12 +260,20 @@ export default function SchedulePage() {
                                 {post.status}
                               </Badge>
                               {post.status === "scheduled" && (
-                                <button
-                                  onClick={() => handleDelete(post.id)}
-                                  className="p-1.5 text-gray-500 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition cursor-pointer"
-                                >
-                                  <HiOutlineTrash className="w-4 h-4" />
-                                </button>
+                                <>
+                                  <button
+                                    onClick={() => setEditingPost(post)}
+                                    className="p-1.5 text-gray-500 hover:text-violet-400 rounded-lg hover:bg-violet-500/10 transition cursor-pointer"
+                                  >
+                                    <HiOutlinePencil className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(post.id)}
+                                    className="p-1.5 text-gray-500 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition cursor-pointer"
+                                  >
+                                    <HiOutlineTrash className="w-4 h-4" />
+                                  </button>
+                                </>
                               )}
                             </div>
                           </div>
@@ -318,8 +336,15 @@ export default function SchedulePage() {
               </div>
             ))}
           </div>
-        )}
+        ))}
       </div>
+
+      {editingPost && (
+        <EditPostModal
+          post={editingPost}
+          onClose={() => setEditingPost(null)}
+        />
+      )}
     </AppLayout>
   );
 }

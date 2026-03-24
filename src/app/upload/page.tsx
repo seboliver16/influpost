@@ -116,6 +116,7 @@ export default function UploadPage() {
                 <div className="flex items-center gap-3 mb-4">
                   {videoData.thumbnailDataUrl ? (
                     <div className="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={videoData.thumbnailDataUrl}
                         alt="Video thumbnail"

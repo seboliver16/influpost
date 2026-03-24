@@ -176,6 +176,7 @@ export default function DashboardPage() {
                 <div key={post.id} className="p-4 flex items-center gap-4">
                   <div className="w-16 h-12 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
                     {post.thumbnailUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
                       <img
                         src={post.thumbnailUrl}
                         alt=""

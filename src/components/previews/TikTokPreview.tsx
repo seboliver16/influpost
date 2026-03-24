@@ -54,6 +54,7 @@ export default function TikTokPreview({
         <div className="relative">
           <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-pink-500 rounded-full border-2 border-white flex items-center justify-center">
             {userAvatar ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img src={userAvatar} className="w-full h-full rounded-full" alt="" />
             ) : (
               <span className="text-xs font-bold text-white">

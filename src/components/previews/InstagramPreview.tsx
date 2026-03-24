@@ -30,6 +30,7 @@ export default function InstagramPreview({
         <div className="w-8 h-8 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-full p-[2px]">
           <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
             {userAvatar ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img src={userAvatar} className="w-full h-full rounded-full" alt="" />
             ) : (
               <span className="text-xs font-bold text-gray-700">
