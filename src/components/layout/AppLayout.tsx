@@ -19,9 +19,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-3 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
           <p className="text-gray-400 text-sm">Loading...</p>
         </div>
       </div>
@@ -31,23 +31,25 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
       {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-gray-950/80 backdrop-blur-xl border-b border-gray-800 flex items-center px-4 z-30">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 flex items-center px-4 z-30">
         <button
           onClick={() => setMobileOpen(true)}
-          className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800/50 cursor-pointer"
+          className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer"
         >
           <HiOutlineMenu className="w-5 h-5" />
         </button>
-        <span className="ml-3 text-sm font-bold bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
-          influpost
-        </span>
+        <span className="ml-3 text-sm font-bold text-gray-900">influpost</span>
       </div>
 
-      <main className="lg:ml-64 p-4 pt-18 lg:p-8 lg:pt-8">{children}</main>
+      <main className="lg:ml-[260px] min-h-screen">
+        <div className="px-4 pt-18 pb-8 lg:px-8 lg:pt-8 lg:pb-8 max-w-6xl mx-auto">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

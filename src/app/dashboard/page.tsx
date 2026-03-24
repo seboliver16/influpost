@@ -26,9 +26,9 @@ const platformIcons = {
 };
 
 const platformColors = {
-  youtube: "text-red-500",
-  instagram: "text-pink-500",
-  tiktok: "text-cyan-400",
+  youtube: "text-red-600",
+  instagram: "text-pink-600",
+  tiktok: "text-gray-900",
 };
 
 export default function DashboardPage() {
@@ -87,29 +87,29 @@ export default function DashboardPage() {
       label: "Scheduled Posts",
       value: scheduledCount,
       icon: HiOutlineClock,
-      color: "text-violet-400",
-      bgColor: "bg-violet-500/10",
+      color: "text-brand-600",
+      bgColor: "bg-brand-50",
     },
     {
       label: "Published",
       value: publishedCount,
       icon: HiOutlineCheckCircle,
-      color: "text-emerald-400",
-      bgColor: "bg-emerald-500/10",
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-50",
     },
     {
       label: "Connected Accounts",
       value: accounts.length,
       icon: HiOutlineUserGroup,
-      color: "text-blue-400",
-      bgColor: "bg-blue-500/10",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
     },
     {
       label: "Total Posts",
       value: posts.length,
       icon: HiOutlineCalendar,
-      color: "text-amber-400",
-      bgColor: "bg-amber-500/10",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
     },
   ];
 
@@ -119,8 +119,8 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-            <p className="text-gray-400 mt-1">
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600 mt-1">
               Welcome back, {user?.displayName || user?.email?.split("@")[0]}
             </p>
           </div>
@@ -137,15 +137,15 @@ export default function DashboardPage() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="bg-gray-900/50 border border-gray-800 rounded-2xl p-5"
+              className="bg-white border border-gray-200 rounded-xl shadow-sm p-5"
             >
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 ${stat.bgColor} rounded-xl flex items-center justify-center`}>
                   <stat.icon className={`w-5 h-5 ${stat.color}`} />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-xs text-gray-500">{stat.label}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-xs text-gray-400">{stat.label}</p>
                 </div>
               </div>
             </div>
@@ -153,16 +153,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Upcoming Posts */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl">
-          <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Upcoming Posts</h2>
-            <Link href="/schedule" className="text-sm text-violet-400 hover:text-violet-300">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
+          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Upcoming Posts</h2>
+            <Link href="/schedule" className="text-sm text-brand-600 hover:text-brand-700">
               View all
             </Link>
           </div>
           {upcomingPosts.length === 0 ? (
             <div className="p-12 text-center">
-              <HiOutlineCalendar className="w-12 h-12 text-gray-700 mx-auto" />
+              <HiOutlineCalendar className="w-12 h-12 text-gray-300 mx-auto" />
               <p className="mt-4 text-gray-400">No scheduled posts yet</p>
               <Link href="/upload" className="mt-3 inline-block">
                 <Button variant="outline" size="sm">
@@ -171,10 +171,10 @@ export default function DashboardPage() {
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-gray-800">
+            <div className="divide-y divide-gray-200">
               {upcomingPosts.map((post) => (
-                <div key={post.id} className="p-4 flex items-center gap-4">
-                  <div className="w-16 h-12 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
+                <div key={post.id} className="p-4 flex items-center gap-4 hover:bg-gray-50 transition">
+                  <div className="w-16 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                     {post.thumbnailUrl ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
@@ -184,17 +184,17 @@ export default function DashboardPage() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">
+                    <p className="text-sm font-medium text-gray-900 truncate">
                       {post.metadata.title}
                     </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-gray-400 mt-0.5">
                       {format(post.scheduledFor, "MMM d, yyyy 'at' h:mm a")}
                     </p>
                   </div>
@@ -227,16 +227,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Connected Accounts */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl">
-          <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Connected Accounts</h2>
-            <Link href="/accounts" className="text-sm text-violet-400 hover:text-violet-300">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
+          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Connected Accounts</h2>
+            <Link href="/accounts" className="text-sm text-brand-600 hover:text-brand-700">
               Manage
             </Link>
           </div>
           {accounts.length === 0 ? (
             <div className="p-12 text-center">
-              <HiOutlineUserGroup className="w-12 h-12 text-gray-700 mx-auto" />
+              <HiOutlineUserGroup className="w-12 h-12 text-gray-300 mx-auto" />
               <p className="mt-4 text-gray-400">No connected accounts</p>
               <Link href="/accounts" className="mt-3 inline-block">
                 <Button variant="outline" size="sm">
@@ -251,14 +251,14 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={account.id}
-                    className="flex items-center gap-3 p-3 bg-gray-800/30 rounded-xl"
+                    className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl"
                   >
                     <Icon className={`w-5 h-5 ${platformColors[account.platform]}`} />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-white truncate">
+                      <p className="text-sm font-medium text-gray-900 truncate">
                         {account.displayName}
                       </p>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-gray-400 truncate">
                         @{account.username}
                       </p>
                     </div>

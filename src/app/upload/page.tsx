@@ -100,8 +100,8 @@ export default function UploadPage() {
     <AppLayout>
       <div className="max-w-7xl mx-auto space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">Upload & Schedule</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900">Upload & Schedule</h1>
+          <p className="text-gray-500 mt-1">
             Upload your video, preview across platforms, and schedule your post
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function UploadPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left - Form */}
             <div className="space-y-6">
-              <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
+              <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
                 <div className="flex items-center gap-3 mb-4">
                   {videoData.thumbnailDataUrl ? (
                     <div className="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0">
@@ -124,14 +124,14 @@ export default function UploadPage() {
                       />
                     </div>
                   ) : (
-                    <div className="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                   )}
                   <div>
-                    <p className="text-sm font-medium text-white">Video uploaded</p>
+                    <p className="text-sm font-medium text-gray-900">Video uploaded</p>
                     <p className="text-xs text-gray-500">{videoData.fileName}</p>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ export default function UploadPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <HiOutlineEye className="w-5 h-5 text-gray-400" />
-                <h3 className="text-sm font-medium text-gray-300">Platform Preview</h3>
+                <h3 className="text-sm font-medium text-gray-500">Platform Preview</h3>
               </div>
 
               {/* Preview tabs */}
@@ -159,8 +159,8 @@ export default function UploadPage() {
                     onClick={() => setPreviewTab(p)}
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                       previewTab === p
-                        ? "bg-violet-500/10 text-violet-400 border border-violet-500/20"
-                        : "text-gray-400 hover:text-white border border-transparent"
+                        ? "bg-white shadow-sm text-brand-700 border border-gray-200"
+                        : "text-gray-500 hover:text-gray-900 border border-transparent"
                     }`}
                   >
                     {p.charAt(0).toUpperCase() + p.slice(1)}
@@ -169,7 +169,7 @@ export default function UploadPage() {
               </div>
 
               {/* Preview content */}
-              <div className="flex justify-center p-6 bg-gray-900/30 border border-gray-800 rounded-2xl min-h-[500px]">
+              <div className="flex justify-center p-6 bg-gray-50 border border-gray-200 rounded-xl min-h-[500px]">
                 {previewTab === "youtube" && (
                   <YouTubePreview
                     videoUrl={videoData.url}

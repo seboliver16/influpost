@@ -37,9 +37,9 @@ const platformIcons = {
 };
 
 const platformColors = {
-  youtube: "text-red-500",
-  instagram: "text-pink-500",
-  tiktok: "text-cyan-400",
+  youtube: "text-red-600",
+  instagram: "text-pink-600",
+  tiktok: "text-gray-900",
 };
 
 type FilterStatus = "all" | "scheduled" | "published" | "failed";
@@ -126,17 +126,19 @@ export default function SchedulePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Scheduled Posts</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Scheduled Posts</h1>
             <p className="text-gray-400 mt-1">
               {posts.length} total post{posts.length !== 1 ? "s" : ""}
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center bg-gray-800/50 rounded-xl border border-gray-700 p-1">
+            <div className="flex items-center bg-gray-100 rounded-xl p-1">
               <button
                 onClick={() => setView("list")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  view === "list" ? "bg-gray-700 text-white" : "text-gray-400"
+                  view === "list"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500"
                 }`}
               >
                 List
@@ -144,7 +146,9 @@ export default function SchedulePage() {
               <button
                 onClick={() => setView("calendar")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  view === "calendar" ? "bg-gray-700 text-white" : "text-gray-400"
+                  view === "calendar"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500"
                 }`}
               >
                 Calendar
@@ -161,7 +165,7 @@ export default function SchedulePage() {
 
         {/* Filters */}
         <div className="flex items-center gap-2">
-          <HiOutlineFilter className="w-4 h-4 text-gray-500" />
+          <HiOutlineFilter className="w-4 h-4 text-gray-400" />
           {(["all", "scheduled", "published", "failed"] as FilterStatus[]).map(
             (f) => (
               <button
@@ -169,13 +173,13 @@ export default function SchedulePage() {
                 onClick={() => setFilter(f)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
                   filter === f
-                    ? "bg-violet-500/10 text-violet-400 border border-violet-500/20"
-                    : "text-gray-400 border border-gray-800 hover:border-gray-700"
+                    ? "bg-brand-50 text-brand-700 border border-brand-200"
+                    : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"
                 }`}
               >
                 {f.charAt(0).toUpperCase() + f.slice(1)}
                 {f !== "all" && (
-                  <span className="ml-1.5 text-gray-600">
+                  <span className="ml-1.5 text-gray-400">
                     {posts.filter((p) => p.status === f).length}
                   </span>
                 )}
@@ -191,9 +195,9 @@ export default function SchedulePage() {
 
         {/* List View */}
         {view === "list" && (filteredPosts.length === 0 ? (
-          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-16 text-center">
-            <HiOutlineCalendar className="w-16 h-16 text-gray-700 mx-auto" />
-            <h3 className="mt-4 text-lg font-medium text-white">No posts found</h3>
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-16 text-center">
+            <HiOutlineCalendar className="w-16 h-16 text-gray-300 mx-auto" />
+            <h3 className="mt-4 text-lg font-medium text-gray-900">No posts found</h3>
             <p className="mt-2 text-gray-400">
               {filter === "all"
                 ? "Upload a video to create your first scheduled post"
@@ -207,18 +211,18 @@ export default function SchedulePage() {
           <div className="space-y-8">
             {groups.map((group) => (
               <div key={group.label}>
-                <h3 className="text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-violet-500 rounded-full" />
+                <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-brand-500 rounded-full" />
                   {group.label}
                 </h3>
                 <div className="space-y-3">
                   {group.posts.map((post) => (
                     <div
                       key={post.id}
-                      className="bg-gray-900/50 border border-gray-800 rounded-2xl p-5 hover:border-gray-700 transition-all"
+                      className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-all"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="w-24 h-16 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0">
+                        <div className="w-24 h-16 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
                           {post.thumbnailUrl ? (
                             /* eslint-disable-next-line @next/next/no-img-element */
                             <img
@@ -228,7 +232,7 @@ export default function SchedulePage() {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <svg className="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z" />
                               </svg>
                             </div>
@@ -238,10 +242,10 @@ export default function SchedulePage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
                             <div>
-                              <h4 className="text-sm font-semibold text-white truncate">
+                              <h4 className="text-sm font-semibold text-gray-900 truncate">
                                 {post.metadata.title}
                               </h4>
-                              <p className="text-xs text-gray-500 mt-0.5">
+                              <p className="text-xs text-gray-400 mt-0.5">
                                 {format(post.scheduledFor, "EEEE, MMMM d, yyyy 'at' h:mm a")}
                               </p>
                             </div>
@@ -263,13 +267,13 @@ export default function SchedulePage() {
                                 <>
                                   <button
                                     onClick={() => setEditingPost(post)}
-                                    className="p-1.5 text-gray-500 hover:text-violet-400 rounded-lg hover:bg-violet-500/10 transition cursor-pointer"
+                                    className="p-1.5 text-gray-400 hover:text-brand-600 rounded-lg hover:bg-brand-50 transition cursor-pointer"
                                   >
                                     <HiOutlinePencil className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => handleDelete(post.id)}
-                                    className="p-1.5 text-gray-500 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition cursor-pointer"
+                                    className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition cursor-pointer"
                                   >
                                     <HiOutlineTrash className="w-4 h-4" />
                                   </button>
@@ -279,7 +283,7 @@ export default function SchedulePage() {
                           </div>
 
                           {post.metadata.description && (
-                            <p className="text-xs text-gray-400 mt-2 line-clamp-2">
+                            <p className="text-xs text-gray-600 mt-2 line-clamp-2">
                               {post.metadata.description}
                             </p>
                           )}
@@ -302,13 +306,13 @@ export default function SchedulePage() {
                                 {post.metadata.hashtags.slice(0, 3).map((tag) => (
                                   <span
                                     key={tag}
-                                    className="text-[10px] text-violet-400/70"
+                                    className="text-[10px] text-brand-600"
                                   >
                                     #{tag}
                                   </span>
                                 ))}
                                 {post.metadata.hashtags.length > 3 && (
-                                  <span className="text-[10px] text-gray-500">
+                                  <span className="text-[10px] text-gray-400">
                                     +{post.metadata.hashtags.length - 3}
                                   </span>
                                 )}
@@ -316,7 +320,7 @@ export default function SchedulePage() {
                             )}
 
                             {post.metadata.locationTag && (
-                              <span className="text-[10px] text-gray-500 flex items-center gap-1">
+                              <span className="text-[10px] text-gray-400 flex items-center gap-1">
                                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                   <path
                                     fillRule="evenodd"

@@ -22,11 +22,7 @@ function generateThumbnail(file: File): Promise<string | undefined> {
       video.preload = "metadata";
       video.muted = true;
       video.playsInline = true;
-
-      video.onloadeddata = () => {
-        video.currentTime = Math.min(1, video.duration / 4);
-      };
-
+      video.onloadeddata = () => { video.currentTime = Math.min(1, video.duration / 4); };
       video.onseeked = () => {
         try {
           const canvas = document.createElement("canvas");
@@ -38,20 +34,12 @@ function generateThumbnail(file: File): Promise<string | undefined> {
             const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
             URL.revokeObjectURL(video.src);
             resolve(dataUrl);
-          } else {
-            resolve(undefined);
-          }
-        } catch {
-          resolve(undefined);
-        }
+          } else { resolve(undefined); }
+        } catch { resolve(undefined); }
       };
-
       video.onerror = () => resolve(undefined);
-
       video.src = URL.createObjectURL(file);
-    } catch {
-      resolve(undefined);
-    }
+    } catch { resolve(undefined); }
   });
 }
 
@@ -78,57 +66,30 @@ export default function VideoUploader({ onUploadComplete }: VideoUploaderProps) 
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (!file || !user) return;
-
-      const maxSize = 500 * 1024 * 1024; // 500MB
-      if (file.size > maxSize) {
-        setError("File size must be under 500MB");
-        return;
-      }
-
+      const maxSize = 500 * 1024 * 1024;
+      if (file.size > maxSize) { setError("File size must be under 500MB"); return; }
       setUploading(true);
       setError(null);
       setProgress(0);
       setFileName(file.name);
       setFileSize(file.size);
-
-      // Generate thumbnail in parallel with upload
       const thumbnailPromise = generateThumbnail(file);
-
       const videoId = uuidv4();
       const storageRef = ref(storage, `videos/${user.uid}/${videoId}/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file, {
         contentType: file.type,
-        customMetadata: {
-          originalName: file.name,
-          userId: user.uid,
-        },
+        customMetadata: { originalName: file.name, userId: user.uid },
       });
-
       uploadTask.on(
         "state_changed",
-        (snapshot) => {
-          const pct = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgress(pct);
-        },
-        (err) => {
-          setError(err.message);
-          setUploading(false);
-        },
+        (snapshot) => { setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)); },
+        (err) => { setError(err.message); setUploading(false); },
         async () => {
           const [url, thumbnailDataUrl] = await Promise.all([
             getDownloadURL(uploadTask.snapshot.ref),
             thumbnailPromise,
           ]);
-          onUploadComplete({
-            id: videoId,
-            url,
-            fileName: file.name,
-            fileSize: file.size,
-            mimeType: file.type,
-            thumbnailDataUrl,
-          });
+          onUploadComplete({ id: videoId, url, fileName: file.name, fileSize: file.size, mimeType: file.type, thumbnailDataUrl });
           setUploading(false);
           setProgress(100);
         }
@@ -139,9 +100,7 @@ export default function VideoUploader({ onUploadComplete }: VideoUploaderProps) 
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "video/*": [".mp4", ".mov", ".avi", ".mkv", ".webm"],
-    },
+    accept: { "video/*": [".mp4", ".mov", ".avi", ".mkv", ".webm"] },
     maxFiles: 1,
     disabled: uploading,
   });
@@ -149,54 +108,50 @@ export default function VideoUploader({ onUploadComplete }: VideoUploaderProps) 
   return (
     <div
       {...getRootProps()}
-      className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${
+      className={`relative border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200 ${
         isDragActive
-          ? "border-violet-500 bg-violet-500/5"
+          ? "border-brand-500 bg-brand-50"
           : uploading
-          ? "border-gray-700 bg-gray-800/30 cursor-default"
-          : "border-gray-700 hover:border-violet-500/50 hover:bg-gray-800/20"
+          ? "border-gray-200 bg-gray-50 cursor-default"
+          : "border-gray-300 hover:border-brand-400 hover:bg-gray-50"
       }`}
     >
       <input {...getInputProps()} />
 
       {uploading ? (
         <div className="space-y-4">
-          <div className="w-16 h-16 mx-auto bg-violet-500/10 rounded-2xl flex items-center justify-center">
-            <HiOutlineFilm className="w-8 h-8 text-violet-400" />
+          <div className="w-14 h-14 mx-auto bg-brand-50 rounded-xl flex items-center justify-center">
+            <HiOutlineFilm className="w-7 h-7 text-brand-600" />
           </div>
           <div>
-            <p className="text-white font-medium">Uploading video...</p>
-            <p className="text-sm text-gray-400 mt-1">
-              {fileName} ({formatFileSize(fileSize)})
-            </p>
-            <p className="text-xs text-gray-500 mt-0.5">{progress}% complete</p>
+            <p className="text-gray-900 font-semibold">Uploading video...</p>
+            <p className="text-sm text-gray-500 mt-1">{fileName} ({formatFileSize(fileSize)})</p>
+            <p className="text-xs text-gray-400 mt-0.5">{progress}% complete</p>
           </div>
-          <div className="w-64 mx-auto bg-gray-800 rounded-full h-2 overflow-hidden">
+          <div className="w-64 mx-auto bg-gray-200 rounded-full h-1.5 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all duration-300"
+              className="h-full bg-brand-600 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
-          <div className="w-16 h-16 mx-auto bg-gray-800/50 rounded-2xl flex items-center justify-center group-hover:bg-violet-500/10">
-            <HiOutlineCloudUpload className="w-8 h-8 text-gray-400" />
+        <div className="space-y-3">
+          <div className="w-14 h-14 mx-auto bg-gray-100 rounded-xl flex items-center justify-center">
+            <HiOutlineCloudUpload className="w-7 h-7 text-gray-400" />
           </div>
           <div>
-            <p className="text-white font-medium">
+            <p className="text-gray-900 font-semibold">
               {isDragActive ? "Drop your video here" : "Drag & drop your video"}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              or click to browse. MP4, MOV, AVI, MKV, WebM up to 500MB
+              or click to browse &middot; MP4, MOV, AVI, MKV, WebM up to 500MB
             </p>
           </div>
         </div>
       )}
 
-      {error && (
-        <p className="mt-4 text-sm text-red-400">{error}</p>
-      )}
+      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
     </div>
   );
 }

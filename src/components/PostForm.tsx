@@ -66,11 +66,8 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!scheduledDate || !scheduledTime || selectedPlatforms.length === 0) return;
-
     const scheduledFor = new Date(`${scheduledDate}T${scheduledTime}`);
-
     onSubmit({
       metadata: {
         title,
@@ -86,10 +83,9 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Platform Selection */}
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Post to platforms
         </label>
         <PlatformSelector
@@ -99,7 +95,6 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
         />
       </div>
 
-      {/* Title */}
       <Input
         label="Title"
         placeholder="Enter video title"
@@ -108,13 +103,12 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
         required
       />
 
-      {/* Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
           Description
         </label>
         <textarea
-          className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 min-h-[100px] resize-y"
+          className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all duration-150 min-h-[100px] resize-y"
           placeholder="Write your post description..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -122,23 +116,22 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
         />
       </div>
 
-      {/* Hashtags */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          <HiOutlineHashtag className="inline w-4 h-4 mr-1" />
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <HiOutlineHashtag className="inline w-4 h-4 mr-1 text-gray-400" />
           Hashtags
         </label>
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-1.5 mb-2">
           {hashtags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-500/10 text-violet-400 text-xs rounded-full border border-violet-500/20"
+              className="inline-flex items-center gap-1 px-2.5 py-1 bg-brand-50 text-brand-700 text-xs font-medium rounded-full"
             >
               #{tag}
               <button
                 type="button"
                 onClick={() => removeHashtag(tag)}
-                className="ml-0.5 hover:text-white cursor-pointer"
+                className="ml-0.5 hover:text-brand-900 cursor-pointer"
               >
                 &times;
               </button>
@@ -153,10 +146,9 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
         />
       </div>
 
-      {/* Location */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          <HiOutlineLocationMarker className="inline w-4 h-4 mr-1" />
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <HiOutlineLocationMarker className="inline w-4 h-4 mr-1 text-gray-400" />
           Location Tag
         </label>
         <Input
@@ -166,10 +158,9 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
         />
       </div>
 
-      {/* Privacy */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          <HiOutlineLockClosed className="inline w-4 h-4 mr-1" />
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <HiOutlineLockClosed className="inline w-4 h-4 mr-1 text-gray-400" />
           Privacy
         </label>
         <div className="flex gap-2">
@@ -178,10 +169,10 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
               key={option}
               type="button"
               onClick={() => setPrivacy(option)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
+              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer ${
                 privacy === option
-                  ? "bg-violet-500/10 text-violet-400 border border-violet-500/20"
-                  : "bg-gray-800/50 text-gray-400 border border-gray-700 hover:border-gray-600"
+                  ? "bg-brand-50 text-brand-700 border border-brand-200"
+                  : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"
               }`}
             >
               {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -190,7 +181,6 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
         </div>
       </div>
 
-      {/* Category */}
       <Input
         label="Category (optional)"
         placeholder="e.g., Entertainment, Education, Gaming"
@@ -198,8 +188,7 @@ export default function PostForm({ onSubmit, onChange, loading, connectedPlatfor
         onChange={(e) => setCategory(e.target.value)}
       />
 
-      {/* Schedule */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <Input
           label="Schedule Date"
           type="date"
