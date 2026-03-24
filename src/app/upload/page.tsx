@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { collection, addDoc, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,6 +24,7 @@ export default function UploadPage() {
     fileName: string;
     fileSize: number;
     mimeType: string;
+    thumbnailDataUrl?: string;
   } | null>(null);
   const [saving, setSaving] = useState(false);
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
@@ -58,6 +59,7 @@ export default function UploadPage() {
         videoId: videoData.id,
         videoUrl: videoData.url,
         videoFileName: videoData.fileName,
+        thumbnailUrl: videoData.thumbnailDataUrl || null,
         metadata: data.metadata,
         platforms: data.platforms,
         accountIds: accounts
@@ -78,17 +80,16 @@ export default function UploadPage() {
     }
   };
 
-  // Listen for form changes from PostForm via DOM events
-  useEffect(() => {
-    const handleFormChange = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      if (detail.title !== undefined) setPreviewTitle(detail.title || "My Amazing Video");
-      if (detail.description !== undefined) setPreviewDescription(detail.description);
-      if (detail.hashtags !== undefined) setPreviewHashtags(detail.hashtags);
-      if (detail.location !== undefined) setPreviewLocation(detail.location);
-    };
-    window.addEventListener("postform-change", handleFormChange);
-    return () => window.removeEventListener("postform-change", handleFormChange);
+  const handleFormChange = useCallback((data: {
+    title: string;
+    description: string;
+    hashtags: string[];
+    locationTag: string;
+  }) => {
+    setPreviewTitle(data.title || "My Amazing Video");
+    setPreviewDescription(data.description);
+    setPreviewHashtags(data.hashtags);
+    setPreviewLocation(data.locationTag);
   }, []);
 
   const userAccountName = accounts.length > 0
@@ -113,11 +114,21 @@ export default function UploadPage() {
             <div className="space-y-6">
               <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center">
-                    <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
+                  {videoData.thumbnailDataUrl ? (
+                    <div className="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                      <img
+                        src={videoData.thumbnailDataUrl}
+                        alt="Video thumbnail"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm font-medium text-white">Video uploaded</p>
                     <p className="text-xs text-gray-500">{videoData.fileName}</p>
@@ -125,6 +136,7 @@ export default function UploadPage() {
                 </div>
                 <PostForm
                   onSubmit={handleSchedule}
+                  onChange={handleFormChange}
                   loading={saving}
                   connectedPlatforms={connectedPlatforms}
                 />

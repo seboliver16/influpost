@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HiOutlineHashtag, HiOutlineLocationMarker, HiOutlineLockClosed } from "react-icons/hi";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
 import { PostMetadata, Platform } from "@/types";
 import PlatformSelector from "./PlatformSelector";
+
+interface PostFormChangeData {
+  title: string;
+  description: string;
+  hashtags: string[];
+  locationTag: string;
+}
 
 interface PostFormProps {
   onSubmit: (data: {
@@ -13,11 +20,12 @@ interface PostFormProps {
     platforms: Platform[];
     scheduledFor: Date;
   }) => void;
+  onChange?: (data: PostFormChangeData) => void;
   loading?: boolean;
   connectedPlatforms?: Platform[];
 }
 
-export default function PostForm({ onSubmit, loading, connectedPlatforms }: PostFormProps) {
+export default function PostForm({ onSubmit, onChange, loading, connectedPlatforms }: PostFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [hashtagInput, setHashtagInput] = useState("");
@@ -28,6 +36,10 @@ export default function PostForm({ onSubmit, loading, connectedPlatforms }: Post
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
+
+  useEffect(() => {
+    onChange?.({ title, description, hashtags, locationTag });
+  }, [title, description, hashtags, locationTag, onChange]);
 
   const handleAddHashtag = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === ",") {

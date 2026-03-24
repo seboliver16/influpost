@@ -8,6 +8,53 @@ import { useAuth } from "@/hooks/useAuth";
 import { v4 as uuidv4 } from "uuid";
 import { HiOutlineCloudUpload, HiOutlineFilm } from "react-icons/hi";
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+}
+
+function generateThumbnail(file: File): Promise<string | undefined> {
+  return new Promise((resolve) => {
+    try {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.muted = true;
+      video.playsInline = true;
+
+      video.onloadeddata = () => {
+        video.currentTime = Math.min(1, video.duration / 4);
+      };
+
+      video.onseeked = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+            URL.revokeObjectURL(video.src);
+            resolve(dataUrl);
+          } else {
+            resolve(undefined);
+          }
+        } catch {
+          resolve(undefined);
+        }
+      };
+
+      video.onerror = () => resolve(undefined);
+
+      video.src = URL.createObjectURL(file);
+    } catch {
+      resolve(undefined);
+    }
+  });
+}
+
 interface VideoUploaderProps {
   onUploadComplete: (videoData: {
     id: string;
@@ -15,6 +62,7 @@ interface VideoUploaderProps {
     fileName: string;
     fileSize: number;
     mimeType: string;
+    thumbnailDataUrl?: string;
   }) => void;
 }
 
@@ -23,6 +71,8 @@ export default function VideoUploader({ onUploadComplete }: VideoUploaderProps) 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [fileName, setFileName] = useState("");
+  const [fileSize, setFileSize] = useState(0);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -38,6 +88,11 @@ export default function VideoUploader({ onUploadComplete }: VideoUploaderProps) 
       setUploading(true);
       setError(null);
       setProgress(0);
+      setFileName(file.name);
+      setFileSize(file.size);
+
+      // Generate thumbnail in parallel with upload
+      const thumbnailPromise = generateThumbnail(file);
 
       const videoId = uuidv4();
       const storageRef = ref(storage, `videos/${user.uid}/${videoId}/${file.name}`);
@@ -62,13 +117,17 @@ export default function VideoUploader({ onUploadComplete }: VideoUploaderProps) 
           setUploading(false);
         },
         async () => {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          const [url, thumbnailDataUrl] = await Promise.all([
+            getDownloadURL(uploadTask.snapshot.ref),
+            thumbnailPromise,
+          ]);
           onUploadComplete({
             id: videoId,
             url,
             fileName: file.name,
             fileSize: file.size,
             mimeType: file.type,
+            thumbnailDataUrl,
           });
           setUploading(false);
           setProgress(100);
@@ -107,7 +166,10 @@ export default function VideoUploader({ onUploadComplete }: VideoUploaderProps) 
           </div>
           <div>
             <p className="text-white font-medium">Uploading video...</p>
-            <p className="text-sm text-gray-400 mt-1">{progress}% complete</p>
+            <p className="text-sm text-gray-400 mt-1">
+              {fileName} ({formatFileSize(fileSize)})
+            </p>
+            <p className="text-xs text-gray-500 mt-0.5">{progress}% complete</p>
           </div>
           <div className="w-64 mx-auto bg-gray-800 rounded-full h-2 overflow-hidden">
             <div
