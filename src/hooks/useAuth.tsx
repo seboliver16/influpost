@@ -35,23 +35,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setLoading(false);
+
+      // Create user profile in background — don't block auth loading
       if (user) {
         const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (!userSnap.exists()) {
-          await setDoc(userRef, {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || "",
-            photoURL: user.photoURL || "",
-            connectedAccounts: [],
-            createdAt: new Date(),
+        getDoc(userRef)
+          .then((snap) => {
+            if (!snap.exists()) {
+              return setDoc(userRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || "",
+                photoURL: user.photoURL || "",
+                connectedAccounts: [],
+                createdAt: new Date(),
+              });
+            }
+          })
+          .catch(() => {
+            // Firestore may be temporarily unavailable — profile will be created on next login
           });
-        }
       }
-      setLoading(false);
     });
     return unsubscribe;
   }, []);
